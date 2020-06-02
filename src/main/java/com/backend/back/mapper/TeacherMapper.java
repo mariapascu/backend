@@ -1,15 +1,15 @@
 package com.backend.back.mapper;
 
 import com.backend.back.dto.UserDto;
-import com.backend.back.model.Student;
+import com.backend.back.model.Teacher;
 import org.springframework.stereotype.Component;
 
 @Component
-public class StudentMapper {
+public class TeacherMapper {
 
-    public Student toEntity(UserDto dto) {
-        Student entity = new Student();
-        entity.setStudentId(dto.getId());
+    public Teacher toEntity(UserDto dto) {
+        Teacher entity = new Teacher();
+        entity.setTeacherId(dto.getId());
         entity.setFirstName(dto.getFirstName());
         entity.setLastName(dto.getLastName());
         entity.setEmail(dto.getEmail());
@@ -17,14 +17,14 @@ public class StudentMapper {
         return entity;
     }
 
-    public UserDto toDto(Student entity) {
+    public UserDto toDto(Teacher entity) {
         UserDto dto = new UserDto();
-        dto.setId(entity.getStudentId());
+        dto.setId(entity.getTeacherId());
         dto.setFirstName(entity.getFirstName());
         dto.setLastName(entity.getLastName());
         dto.setEmail(entity.getEmail());
         dto.setPassword(entity.getPassword());
-        dto.setRole("student");
+        dto.setRole("teacher");
         return dto;
     }
 

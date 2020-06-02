@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RectangularParallelepipedRepository extends JpaRepository<GeometricFigure, Long> {
+public interface GeometricFigureRepository extends JpaRepository<GeometricFigure, Long> {
 }

@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "Teachers")
 @Data
-@AllArgsConstructor
+@NoArgsConstructor
 public class Teacher extends User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

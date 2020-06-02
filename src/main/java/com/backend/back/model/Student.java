@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "Students")
@@ -15,7 +16,4 @@ public class Student extends User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "student_id")
     private Long studentId;
-
-
-
 }

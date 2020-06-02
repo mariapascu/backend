@@ -1,22 +1,29 @@
 package com.backend.back.controller;
 
-import com.backend.back.model.geometry.RectangularParallelepiped;
+import com.backend.back.dto.GeometryProblemDto;
+import com.backend.back.model.geometry.GeometricFigure;
 import com.backend.back.model.geometry.solver.RectangularParallelepipedSolver;
 import com.backend.back.model.geometry.solver.Solver;
 import com.backend.back.repository.RectangularParallelepipedRepository;
 import com.backend.back.repository.RegularSquarePyramidRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/para")
+@RequestMapping("/problem")
 public class RectangularParallelepipedController {
     @Autowired
     private RectangularParallelepipedRepository rectangularParallelepipedRepository;
     @Autowired
     private RegularSquarePyramidRepository repo;
+
+    @PostMapping("/")
+    public ResponseEntity solveProblem(@RequestBody GeometryProblemDto geometryProblemDto) {
+        System.out.println(geometryProblemDto.toString());
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
 
     @GetMapping("/try")
     public void trySmth() {
@@ -24,7 +31,7 @@ public class RectangularParallelepipedController {
 //        RectangularParallelepipedHelper s = new RectangularParallelepipedHelper(p);
 //
 //        s.solve();
-        RectangularParallelepiped p = new RectangularParallelepiped();
+        GeometricFigure p = new GeometricFigure();
         p.getDetails().put("length", 2F);
         p.getDetails().put("height", 3F);
         p.getDetails().put("baseSurface", 4F);

@@ -1,6 +1,6 @@
 package com.backend.back.controller;
 
-import com.backend.back.dto.StudentDto;
+import com.backend.back.dto.UserDto;
 import com.backend.back.mapper.StudentMapper;
 import com.backend.back.model.Student;
 import com.backend.back.service.StudentService;
@@ -15,12 +15,4 @@ public class StudentController {
     private StudentService studentService;
     @Autowired
     private StudentMapper studentMapper;
-
-    @PostMapping("/add")
-    public ResponseEntity<StudentDto> saveStudent(@RequestBody StudentDto studentDto) {
-        Student student = studentMapper.toEntity(studentDto);
-        Student newStudent = studentService.createStudent(student);
-        StudentDto newStudentDto = studentMapper.toDto(newStudent);
-        return ResponseEntity.ok(newStudentDto);
-    }
 }
