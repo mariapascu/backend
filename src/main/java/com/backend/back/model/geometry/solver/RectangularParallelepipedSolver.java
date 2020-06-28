@@ -1,7 +1,7 @@
 package com.backend.back.model.geometry.solver;
 
-import com.backend.back.model.geometry.GeometricFigure;
-import javafx.util.Pair;
+import com.backend.back.model.geometry.GeometricShape;
+import com.backend.back.utils.NumberFormatter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -9,52 +9,56 @@ import java.util.*;
 
 @Getter
 public class RectangularParallelepipedSolver extends Solver{
-    public RectangularParallelepipedSolver(GeometricFigure rectangularParallelepiped, String requiredInfo) {
+    public RectangularParallelepipedSolver(GeometricShape rectangularParallelepiped, String requiredInfo) {
         super(rectangularParallelepiped, requiredInfo);
     }
-
-    public List<String> getKnown() {
-        List<String> known = new ArrayList<>();
-        known.addAll(super.geometricFigure.getDetails().keySet());
-
-        return known;
-    }
-
 
     public Map<String, List<Step>> getTheory() {
         Map<String, List<Step>> theory = new HashMap<>();
         theory.put("total surface", new ArrayList<>());
-        theory.get("total surface").add(new Step1(super.geometricFigure));
+        theory.get("total surface").add(new Step1(super.geometricShape.getDetails()));
         theory.put("base surface", new ArrayList<>());
-        theory.get("base surface").add(new Step2(super.geometricFigure));
+        theory.get("base surface").add(new Step2(super.geometricShape.getDetails()));
         theory.put("lateral surface", new ArrayList<>());
-        theory.get("lateral surface").add(new Step3(super.geometricFigure));
+        theory.get("lateral surface").add(new Step3(super.geometricShape.getDetails()));
         theory.put("volume", new ArrayList<>());
-        theory.get("volume").add(new Step4(super.geometricFigure));
+        theory.get("volume").add(new Step4(super.geometricShape.getDetails()));
         theory.put("base perimeter", new ArrayList<>());
-        theory.get("base perimeter").add(new Step5(super.geometricFigure));
+        theory.get("base perimeter").add(new Step5(super.geometricShape.getDetails()));
+        theory.put("length", new ArrayList<>());
+        theory.get("length").add(new Step7(super.geometricShape.getDetails()));
+        theory.get("length").add(new Step8(super.geometricShape.getDetails()));
+        theory.get("length").add(new Step11(super.geometricShape.getDetails()));
         theory.put("width", new ArrayList<>());
-        theory.get("width").add(new Step9(super.geometricFigure));
+        theory.get("width").add(new Step6(super.geometricShape.getDetails()));
+        theory.get("width").add(new Step9(super.geometricShape.getDetails()));
+        theory.get("width").add(new Step12(super.geometricShape.getDetails()));
+        theory.put("height", new ArrayList<>());
+        theory.get("height").add(new Step10(super.geometricShape.getDetails()));
         return theory;
     }
 
     @AllArgsConstructor
     private class Step1 implements Step {
-        GeometricFigure p;
+        Map<String, Float> p;
 
         // totalSurface = 2(l * w + l * h + w * h)
         public void executeStep() {
-            var m = p.getDetails();
-            Float totalSurface = 2 * (m.get("length") * m.get("width") + m.get("length") * m.get("height") + m.get("width") * m.get("height"));
-            m.put("total surface", totalSurface);
+            Float totalSurface = 2 * (p.get("length") * p.get("width") + p.get("length") * p.get("height") + p.get("width") * p.get("height"));
+            p.put("total surface", totalSurface);
         }
 
         @Override
         public List<String> getFormulas() {
+            Number length = NumberFormatter.getNumber(p.get("length"));
+            Number width = NumberFormatter.getNumber(p.get("width"));
+            Number height = NumberFormatter.getNumber(p.get("height"));
+            Number unknownProperty = NumberFormatter.getNumber(p.get(getUnknownProperty()));
             String formula = getUnknownProperty() + " = 2 * (length * width + length * height + width * height)";
-            String calculation = getUnknownProperty() + " = 2 * (" + p.getDetails().get("length") + " * "+ p.getDetails().get("width") + " + "
-                    + p.getDetails().get("length") + " * " + p.getDetails().get("height") + " + " + p.getDetails().get("width") + " * " + p.getDetails().get("height") + ")";
-            String result = getUnknownProperty() + " = " + p.getDetails().get(getUnknownProperty());
+            String calculation = getUnknownProperty() + " = 2 * (" + length + " cm * "+ width + " cm + "
+                    + length + " cm * " + height + " cm + " + width + " cm * " + height + " cm)";
+
+            String result = getUnknownProperty() + " = " + unknownProperty + " cm^2";
             return Arrays.asList(formula, calculation, result);
         }
 
@@ -71,20 +75,22 @@ public class RectangularParallelepipedSolver extends Solver{
 
     @AllArgsConstructor
     private class Step2 implements Step {
-        GeometricFigure p;
+        Map<String, Float> p;
 
         // baseSurface = l * w
         public void executeStep() {
-            var m = p.getDetails();
-            Float baseSurface = m.get("length") * m.get("width");
-            m.put("base surface", baseSurface);
+            Float baseSurface = p.get("length") * p.get("width");
+            p.put("base surface", baseSurface);
         }
 
         @Override
         public List<String> getFormulas() {
+            Number length = NumberFormatter.getNumber(p.get("length"));
+            Number width = NumberFormatter.getNumber(p.get("width"));
+            Number unknownProperty = NumberFormatter.getNumber(p.get(getUnknownProperty()));
             String formula = getUnknownProperty() + " = length * width";
-            String calculation = getUnknownProperty() + " = " + p.getDetails().get("length") + " * " + p.getDetails().get("width");
-            String result = getUnknownProperty() + " = " + p.getDetails().get(getUnknownProperty());
+            String calculation = getUnknownProperty() + " = " + length + " cm * " + width + " cm";
+            String result = getUnknownProperty() + " = " + unknownProperty + " cm^2";
             return Arrays.asList(formula, calculation, result);
         }
 
@@ -101,21 +107,24 @@ public class RectangularParallelepipedSolver extends Solver{
 
     @AllArgsConstructor
     private class Step3 implements Step {
-        GeometricFigure p;
+        Map<String, Float> p;
 
         // lateralSurface = 2(l * w + w * h)
         public void executeStep() {
-            var m = p.getDetails();
-            Float lateralSurface = 2 * (m.get("length") * m.get("width") + m.get("width") * m.get("height"));
-            m.put("lateral surface", lateralSurface);
+            Float lateralSurface = 2 * (p.get("length") * p.get("width") + p.get("width") * p.get("height"));
+            p.put("lateral surface", lateralSurface);
         }
 
         @Override
         public List<String> getFormulas() {
+            Number length = NumberFormatter.getNumber(p.get("length"));
+            Number width = NumberFormatter.getNumber(p.get("width"));
+            Number height = NumberFormatter.getNumber(p.get("height"));
+            Number unknownProperty = NumberFormatter.getNumber(p.get(getUnknownProperty()));
             String formula = getUnknownProperty() + " = 2 * (length * width + width * height)";
-            String calculation = getUnknownProperty() + " = " + " 2 * (" + p.getDetails().get("length") + " * " + p.getDetails().get("width")
-                    + " + " +  p.getDetails().get("width") + " * " + p.getDetails().get("height") +")";
-            String result = getUnknownProperty() + " = " + p.getDetails().get(getUnknownProperty());
+            String calculation = getUnknownProperty() + " = " + " 2 * (" + length + " cm * " + width
+                    + " cm + " + width + " cm * " + height +" cm)";
+            String result = getUnknownProperty() + " = " + unknownProperty + " cm^2";
             return Arrays.asList(formula, calculation, result);
         }
 
@@ -137,20 +146,23 @@ public class RectangularParallelepipedSolver extends Solver{
 
     @AllArgsConstructor
     private class Step4 implements Step {
-        GeometricFigure p;
+        Map<String, Float> p;
 
         // volume = l * w * h
         public void executeStep() {
-            var m = p.getDetails();
-            Float volume = m.get("length") * m.get("width") * m.get("height");
-            m.put("volume", volume);
+            Float volume = p.get("length") * p.get("width") * p.get("height");
+            p.put("volume", volume);
         }
 
         @Override
         public List<String> getFormulas() {
+            Number length = NumberFormatter.getNumber(p.get("length"));
+            Number width = NumberFormatter.getNumber(p.get("width"));
+            Number height = NumberFormatter.getNumber(p.get("height"));
+            Number unknownProperty = NumberFormatter.getNumber(p.get(getUnknownProperty()));
             String formula = getUnknownProperty() + " = length * width * height";
-            String calculation = getUnknownProperty() + " = " + p.getDetails().get("length") + " * " + p.getDetails().get("width") + " * " + p.getDetails().get("height");
-            String result = getUnknownProperty() + " = " + p.getDetails().get(getUnknownProperty());
+            String calculation = getUnknownProperty() + " = " + length + " cm * " + width + " cm * " + height + " cm";
+            String result = getUnknownProperty() + " = " + unknownProperty + " cm^3";
             return Arrays.asList(formula, calculation, result);
         }
 
@@ -172,20 +184,22 @@ public class RectangularParallelepipedSolver extends Solver{
 
     @AllArgsConstructor
     private class Step5 implements Step {
-        GeometricFigure p;
+        Map<String, Float> p;
 
         // basePerimeter = 2(l + w)
         public void executeStep() {
-            var m = p.getDetails();
-            Float basePerimeter = 2 * (m.get("length") + m.get("width"));
-            m.put("base perimeter", basePerimeter);
+            Float basePerimeter = 2 * (p.get("length") + p.get("width"));
+            p.put("base perimeter", basePerimeter);
         }
 
         @Override
         public List<String> getFormulas() {
+            Number length = NumberFormatter.getNumber(p.get("length"));
+            Number width = NumberFormatter.getNumber(p.get("width"));
+            Number unknownProperty = NumberFormatter.getNumber(p.get(getUnknownProperty()));
             String formula = getUnknownProperty() + " = 2 * (length + width)";
-            String calculation = getUnknownProperty() + " = 2 * (" + p.getDetails().get("length") +  " + " + p.getDetails().get("width") + ")";
-            String result = getUnknownProperty() + " = " + p.getDetails().get(getUnknownProperty());
+            String calculation = getUnknownProperty() + " = 2 * (" + length +  " cm + " + width + " cm)";
+            String result = getUnknownProperty() + " = " + unknownProperty + " cm";
             return Arrays.asList(formula, calculation, result);
         }
 
@@ -200,25 +214,15 @@ public class RectangularParallelepipedSolver extends Solver{
         }
     }
 
-//    @AllArgsConstructor
-//    private class Step6 implements Step {
-//        RectangularParallelepiped p;
-//        // height = (tS - 2 * l * w)/(2 * (L + l))
-//        public void executeStep() {
-//            Float lateralSurface = 2 * (p.getLength() * p.getWidth() + p.getWidth() * p.getHeight());
-//            p.setLateralSurface(lateralSurface);
-//        }
-//    }
-
     @AllArgsConstructor
-    private class Step9 implements Step {
-        GeometricFigure p;
+    private class Step6 implements Step {
+        Map<String, Float> p;
 
-        // w = bS / l
+        // w = bS / L
+        @Override
         public void executeStep() {
-            var m = p.getDetails();
-            Float width = m.get("base surface") / m.get("length");
-            m.put("width", width);
+            Float width = p.get("base surface") / p.get("length");
+            p.put("width", width);
         }
 
         @Override
@@ -233,18 +237,214 @@ public class RectangularParallelepipedSolver extends Solver{
 
         @Override
         public List<String> getFormulas() {
+            Number length = NumberFormatter.getNumber(p.get("length"));
+            Number baseSurface = NumberFormatter.getNumber(p.get("base surface"));
+            Number unknownProperty = NumberFormatter.getNumber(p.get(getUnknownProperty()));
             String formula = getUnknownProperty() + " = base surface / length";
-            String calculation = getUnknownProperty() + " = " + p.getDetails().get("base surface") + " / " + p.getDetails().get("length");
-            String result = getUnknownProperty() + " = " + p.getDetails().get(getUnknownProperty());
+            String calculation = getUnknownProperty() + " = " + baseSurface + " cm^2/" + length + " cm";
+            String result = getUnknownProperty() + " = " + unknownProperty + " cm";
             return Arrays.asList(formula, calculation, result);
+        }
+    }
+
+    @AllArgsConstructor
+    private class Step7 implements Step {
+        Map<String, Float> p;
+
+        // L = bS / w
+        @Override
+        public void executeStep() {
+            Float length = p.get("base surface") / p.get("width");
+            p.put("length", length);
         }
 
         @Override
-        public String toString() {
-            String s = getUnknownProperty() + " = " + getKnownProperties().get(0) + " / " + getKnownProperties().get(1) + ";" +
-                    getUnknownProperty() + " = " + p.getDetails().get(getKnownProperties().get(0)) + " / " + p.getDetails().get(getKnownProperties().get(1)) + "\n";
-            return s;
-            //return "w = bS / l";
+        public List<String> getKnownProperties() {
+            return Arrays.asList("base surface", "width");
+        }
+
+        @Override
+        public String getUnknownProperty() {
+            return "length";
+        }
+
+        @Override
+        public List<String> getFormulas() {
+            Number baseSurface = NumberFormatter.getNumber(p.get("base surface"));
+            Number width = NumberFormatter.getNumber(p.get("width"));
+            Number unknownProperty = NumberFormatter.getNumber(p.get(getUnknownProperty()));
+            String formula = getUnknownProperty() + " = base surface / width";
+            String calculation = getUnknownProperty() + " = " + baseSurface + " cm^2/" + width + " cm";
+            String result = getUnknownProperty() + " = " + unknownProperty + " cm";
+            return Arrays.asList(formula, calculation, result);
+        }
+    }
+
+    @AllArgsConstructor
+    private class Step8 implements Step {
+        Map<String, Float> p;
+
+        // L = V / (w * h)
+        @Override
+        public void executeStep() {
+            Float length = p.get("volume") / (p.get("width") * p.get("height"));
+            p.put("length", length);
+        }
+
+        @Override
+        public List<String> getKnownProperties() {
+            return Arrays.asList("volume", "width", "height");
+        }
+
+        @Override
+        public String getUnknownProperty() {
+            return "length";
+        }
+
+        @Override
+        public List<String> getFormulas() {
+            Number width = NumberFormatter.getNumber(p.get("width"));
+            Number height = NumberFormatter.getNumber(p.get("height"));
+            Number volume = NumberFormatter.getNumber(p.get("volume"));
+            Number unknownProperty = NumberFormatter.getNumber(p.get(getUnknownProperty()));
+            String formula = getUnknownProperty() + " = volume / (width * height)";
+            String calculation = getUnknownProperty() + " = " + volume + " cm^3/(" + width + " cm * " + height + " cm)";
+            String result = getUnknownProperty() + " = " + unknownProperty + " cm";
+            return Arrays.asList(formula, calculation, result);
+        }
+    }
+
+    @AllArgsConstructor
+    private class Step9 implements Step {
+        Map<String, Float> p;
+
+        // l = V / (L * h)
+        @Override
+        public void executeStep() {
+            Float width = p.get("volume") / (p.get("length") * p.get("height"));
+            p.put("width", width);
+        }
+
+        @Override
+        public List<String> getKnownProperties() {
+            return Arrays.asList("volume", "length", "height");
+        }
+
+        @Override
+        public String getUnknownProperty() {
+            return "width";
+        }
+
+        @Override
+        public List<String> getFormulas() {
+            Number height = NumberFormatter.getNumber(p.get("height"));
+            Number length = NumberFormatter.getNumber(p.get("length"));
+            Number unknownProperty = NumberFormatter.getNumber(p.get(getUnknownProperty()));
+            Number volume = NumberFormatter.getNumber(p.get("volume"));
+            String formula = getUnknownProperty() + " = volume / (width * height)";
+            String calculation = getUnknownProperty() + " = " + volume + " cm^3/(" + length + " cm * " + height + " cm)";
+            String result = getUnknownProperty() + " = " + unknownProperty + " cm";
+            return Arrays.asList(formula, calculation, result);
+        }
+    }
+
+    @AllArgsConstructor
+    private class Step10 implements Step {
+        Map<String, Float> p;
+
+        // h = V / (L * w)
+        @Override
+        public void executeStep() {
+            Float height = p.get("volume") / (p.get("length") * p.get("width"));
+            p.put("height", height);
+        }
+
+        @Override
+        public List<String> getKnownProperties() {
+            return Arrays.asList("volume", "length", "width");
+        }
+
+        @Override
+        public String getUnknownProperty() {
+            return "height";
+        }
+
+        @Override
+        public List<String> getFormulas() {
+            Number width = NumberFormatter.getNumber(p.get("width"));
+            Number unknownProperty = NumberFormatter.getNumber(p.get(getUnknownProperty()));
+            Number length = NumberFormatter.getNumber(p.get("length"));
+            Number volume = NumberFormatter.getNumber(p.get("volume"));
+            String formula = getUnknownProperty() + " = volume / (width * height)";
+            String calculation = getUnknownProperty() + " = " + volume + " cm^3/(" + length + " cm * " + width + " cm)";
+            String result = getUnknownProperty() + " = " + unknownProperty + " cm";
+            return Arrays.asList(formula, calculation, result);
+        }
+    }
+
+    @AllArgsConstructor
+    private class Step11 implements Step {
+        Map<String, Float> p;
+
+        // L = P / 2 - w
+        @Override
+        public void executeStep() {
+            Float length = p.get("base perimeter") / 2 - p.get("width");
+            p.put("length", length);
+        }
+
+        @Override
+        public List<String> getKnownProperties() {
+            return Arrays.asList("base perimeter", "width");
+        }
+
+        @Override
+        public String getUnknownProperty() {
+            return "length";
+        }
+
+        @Override
+        public List<String> getFormulas() {
+            Number width = NumberFormatter.getNumber(p.get("width"));
+            Number basePerimeter = NumberFormatter.getNumber(p.get("base perimeter"));
+            Number unknownProperty = NumberFormatter.getNumber(p.get(getUnknownProperty()));
+            String formula = getUnknownProperty() + " = base perimeter / 2 - width";
+            String calculation = getUnknownProperty() + " = " + basePerimeter + " cm/ 2 - " + width + " cm";
+            String result = getUnknownProperty() + " = " + unknownProperty + " cm";
+            return Arrays.asList(formula, calculation, result);
+        }
+    }
+
+    @AllArgsConstructor
+    private class Step12 implements Step {
+        Map<String, Float> p;
+
+        // w = P / 2 - L
+        @Override
+        public void executeStep() {
+            Float width = p.get("base perimeter") / 2 - p.get("length");
+            p.put("width", width);
+        }
+
+        @Override
+        public List<String> getKnownProperties() {
+            return Arrays.asList("base perimeter", "length");
+        }
+
+        @Override
+        public String getUnknownProperty() {
+            return "width";
+        }
+
+        @Override
+        public List<String> getFormulas() {
+            Number length = NumberFormatter.getNumber(p.get("length"));
+            Number basePerimeter = NumberFormatter.getNumber(p.get("base perimeter"));
+            Number unknownProperty = NumberFormatter.getNumber(p.get(getUnknownProperty()));
+            String formula = getUnknownProperty() + " = base perimeter / 2 - width";
+            String calculation = getUnknownProperty() + " = " + basePerimeter + " cm/ 2 - " + length + " cm";
+            String result = getUnknownProperty() + " = " + unknownProperty + " cm";
+            return Arrays.asList(formula, calculation, result);
         }
     }
 }

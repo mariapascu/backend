@@ -11,10 +11,6 @@ import java.util.Map;
 @NoArgsConstructor
 @Data
 @JsonComponent
-public class GeometryProblemDto {
-    private Long problemId;
-    private Long userId;
-    private String shapeName;
-    private String unknownProperty;
-    private Map<String, Float> propertyMap;
+public class MultipleSolutionsDto {
+    Map<String, Float> propertyMap;
 }

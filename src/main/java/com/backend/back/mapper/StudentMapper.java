@@ -23,7 +23,7 @@ public class StudentMapper {
         dto.setFirstName(entity.getFirstName());
         dto.setLastName(entity.getLastName());
         dto.setEmail(entity.getEmail());
-        dto.setPassword(entity.getPassword());
+        dto.setPassword("");
         dto.setRole("student");
         return dto;
     }

@@ -1,9 +1,11 @@
 package com.backend.back.model;
 
-import com.backend.back.model.geometry.GeometricFigure;
+import com.backend.back.exception.CustomException;
+import com.backend.back.model.geometry.GeometricShape;
 import com.backend.back.model.geometry.solver.RectangularParallelepipedSolver;
 import com.backend.back.model.geometry.solver.Solver;
 import com.backend.back.model.geometry.solver.Step;
+import com.backend.back.utils.SolverFactory;
 import javafx.util.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,17 +26,18 @@ public class GeometryProblem {
     private Long geometryProblemId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    private GeometricFigure geometricFigure;
+    private GeometricShape geometricShape;
 
     @Column(name = "unknown_property")
     private String unknownProperty;
 
     @ManyToOne
-    @JoinColumn(name="student_id", nullable = false)
+    @JoinColumn(name="user_id", nullable = false)
     private Student student;
 
-    public Pair<Float, List<Step>> getSolution() {
-        Solver solver = new RectangularParallelepipedSolver(geometricFigure, unknownProperty);
+    public Pair<Float, List<Step>> getSolution() throws CustomException {
+        SolverFactory solverFactory = new SolverFactory();
+        Solver solver = solverFactory.getSolver(geometricShape, unknownProperty);
         return solver.solve();
     }
 

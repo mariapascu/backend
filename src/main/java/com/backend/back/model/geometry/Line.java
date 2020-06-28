@@ -1,15 +1,17 @@
 package com.backend.back.model.geometry;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Lines")
-public class Line {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "line_id")
-    private Long lineId;
-
+@Table(name = "lines")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Line extends Element {
     @OneToOne(fetch = FetchType.LAZY)
     private Point pointA;
 
